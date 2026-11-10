@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FarmWise AI — Voice assistant for farmers in Telugu, Hindi, and English.">
+    <title>Voice Assistant | FarmWise AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-900: #0d2b1e;
+            --green-800: #173f35;
+            --green-600: #176b45;
+            --green-500: #2d8653;
+            --green-400: #4cad73;
+            --green-300: #72c993;
+            --white: #ffffff;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--green-900);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(23,63,53,0.5);
+            backdrop-filter: blur(12px);
+        }
+        .brand { text-decoration: none; color: var(--white); font-family: 'Manrope',sans-serif; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+        .brand-mark { width: 32px; height: 32px; background: linear-gradient(135deg, var(--green-500), var(--green-300)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; }
+        .btn-back { padding: 0.5rem 1rem; border-radius: 999px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; }
+        .btn-back:hover { background: rgba(255,255,255,0.14); color: var(--white); }
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 2rem; text-align: center; }
+        .assistant-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green-800), var(--green-600));
+            border: 3px solid rgba(45,134,83,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .assistant-circle:hover {
+            border-color: rgba(45,134,83,0.8);
+            box-shadow: 0 0 40px rgba(45,134,83,0.3);
+        }
+        .assistant-circle.listening {
+            border-color: var(--green-400);
+            box-shadow: 0 0 60px rgba(45,134,83,0.5);
+            animation: breathe 1.5s ease-in-out infinite;
+        }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(45,134,83,0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 0 70px rgba(45,134,83,0.6); }
+        }
+        .ripple {
+            position: absolute;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 2px solid rgba(45,134,83,0.4);
+            animation: rippleOut 2s ease-out infinite;
+            display: none;
+        }
+        .listening .ripple { display: block; }
+        .listening .ripple:nth-child(2) { animation-delay: 0.6s; }
+        .listening .ripple:nth-child(3) { animation-delay: 1.2s; }
+        @keyframes rippleOut {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        h1 { font-family: 'Manrope',sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .subtitle { color: rgba(255,255,255,0.55); margin-bottom: 2rem; max-width: 400px; line-height: 1.6; }
+        .language-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .lang-btn {
+            padding: 0.4rem 1rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.65);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .lang-btn.active, .lang-btn:hover {
+            background: rgba(45,134,83,0.2);
+            border-color: rgba(45,134,83,0.4);
+            color: var(--green-300);
+        }
+        .status-text {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 1.5rem;
+            min-height: 1.5rem;
+        }
+        .listening-text { color: var(--green-300); }
+        .transcript-box {
+            width: 100%;
+            max-width: 500px;
+            min-height: 80px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 1.5rem;
+        }
+        .btn-mic {
+            padding: 0.9rem 2.5rem;
+            background: linear-gradient(135deg, var(--green-500), var(--green-400));
+            color: var(--white);
+            border: none;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 8px 24px rgba(45,134,83,0.4);
+        }
+        .btn-mic:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(45,134,83,0.55); }
+        .help-text { margin-top: 1.5rem; color: rgba(255,255,255,0.3); font-size: 0.8rem; }
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+            max-width: 500px;
+        }
+        .suggestion-chip {
+            padding: 0.4rem 0.9rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 999px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .suggestion-chip:hover {
+            background: rgba(45,134,83,0.15);
+            border-color: rgba(45,134,83,0.3);
+            color: var(--green-300);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="farmer.html" class="brand">
+            <span class="brand-mark">F</span>
+            FarmWise <strong>AI</strong>
+        </a>
+        <a href="farmer.html" class="btn-back">← Back to Dashboard</a>
+    </header>
+
+    <main>
+        <div class="assistant-circle" id="assistantCircle" onclick="toggleListening()" title="Click to start voice search">
+            <span class="ripple"></span>
+            <span class="ripple"></span>
+            <span class="ripple"></span>
+            🎙️
+        </div>
+
+        <h1>Voice Assistant</h1>
+        <p class="subtitle">Ask about fertilizer availability, prices, or find local dealers — in your language.</p>
+
+        <div class="language-row">
+            <button class="lang-btn" onclick="setLang('te')">తెలుగు</button>
+            <button class="lang-btn active" onclick="setLang('en')">English</button>
+            <button class="lang-btn" onclick="setLang('hi')">हिन्दी</button>
+        </div>
+
+        <p class="status-text" id="statusText">Click the microphone to start</p>
+
+        <div class="transcript-box" id="transcriptBox">Your voice query will appear here...</div>
+
+        <button class="btn-mic" onclick="toggleListening()" id="micBtn">🎙️ Start Listening</button>
+
+        <p class="help-text">Supported on Chrome and Edge browsers. Enable microphone permissions when prompted.</p>
+
+        <div class="suggestions">
+            <span class="suggestion-chip" onclick="simulateQuery('Where can I find urea near me?')">Where can I find urea?</span>
+            <span class="suggestion-chip" onclick="simulateQuery('What is the price of DAP today?')">DAP price today?</span>
+            <span class="suggestion-chip" onclick="simulateQuery('Show me dealers in Guntur')">Dealers in Guntur</span>
+            <span class="suggestion-chip" onclick="simulateQuery('Is urea available in my village?')">Urea in my village?</span>
+        </div>
+    </main>
+
+    <script>
+        let recognition = null;
+        let isListening = false;
+        let currentLang = 'en';
+
+        const langMap = {
+            'en': 'en-IN',
+            'te': 'te-IN',
+            'hi': 'hi-IN'
+        };
+
+        const promptMap = {
+            'en': 'Click the microphone to start',
+            'te': 'మైక్రోఫోన్ నొక్కండి',
+            'hi': 'माइक्रोफ़ोन बटन दबाएं'
+        };
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', ['te','en','hi'][i] === lang);
+            });
+            document.getElementById('statusText').textContent = promptMap[lang];
+        }
+
+        function toggleListening() {
+            if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+                document.getElementById('transcriptBox').textContent =
+                    'Voice recognition is not supported in your browser. Please use Chrome or Edge.';
+                document.getElementById('statusText').textContent = 'Browser not supported';
+                return;
+            }
+
+            if (isListening) {
+                stopListening();
+            } else {
+                startListening();
+            }
+        }
+
+        function startListening() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = langMap[currentLang] || 'en-IN';
+            recognition.interimResults = true;
+            recognition.continuous = false;
+
+            recognition.onstart = () => {
+                isListening = true;
+                document.getElementById('assistantCircle').classList.add('listening');
+                document.getElementById('statusText').textContent = '🔴 Listening... Speak now';
+                document.getElementById('statusText').className = 'status-text listening-text';
+                document.getElementById('micBtn').textContent = '⏹ Stop Listening';
+                document.getElementById('transcriptBox').textContent = '';
+            };
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                document.getElementById('transcriptBox').textContent = transcript;
+            };
+
+            recognition.onend = () => {
+                stopListening();
+                const text = document.getElementById('transcriptBox').textContent;
+                if (text && text !== 'Your voice query will appear here...') {
+                    document.getElementById('statusText').textContent = '✓ Query captured — redirecting to search...';
+                    setTimeout(() => {
+                        window.location.href = `farmer.html?q=${encodeURIComponent(text)}`;
+                    }, 1500);
+                }
+            };
+
+            recognition.onerror = (e) => {
+                stopListening();
+                document.getElementById('statusText').textContent =
+                    e.error === 'not-allowed' ? 'Microphone permission denied' : 'Error: ' + e.error;
+            };
+
+            recognition.start();
+        }
+
+        function stopListening() {
+            isListening = false;
+            if (recognition) recognition.stop();
+            document.getElementById('assistantCircle').classList.remove('listening');
+            document.getElementById('statusText').textContent = promptMap[currentLang];
+            document.getElementById('statusText').className = 'status-text';
+            document.getElementById('micBtn').textContent = '🎙️ Start Listening';
+        }
+
+        function simulateQuery(text) {
+            document.getElementById('transcriptBox').textContent = text;
+            document.getElementById('statusText').textContent = '✓ Query captured — redirecting to search...';
+            setTimeout(() => {
+                window.location.href = `farmer.html?q=${encodeURIComponent(text)}`;
+            }, 1200);
+        }
+    </script>
+</body>
+</html>

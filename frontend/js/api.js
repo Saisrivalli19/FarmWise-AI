@@ -1,5 +1,10 @@
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+// API base URL — reads from global FARMWISE_CONFIG if available (set in farmer-config.js),
+// otherwise falls back to localhost for development.
+const API_BASE_URL =
+    (typeof window !== "undefined" && window.FARMWISE_CONFIG?.apiBaseUrl) ||
+    "http://127.0.0.1:8000";
+
 
 // Read the current access token.
 function getAuthToken() {
