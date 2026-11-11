@@ -4,7 +4,7 @@
  * Do not store dealer, inventory, or store records here.
  */
 window.FARMWISE_CONFIG = Object.freeze({
-    apiBaseUrl: "http://127.0.0.1:8000",
+    apiBaseUrl: "https://farmwise-backend-3yha.onrender.com",
 
     lowStockThresholdKg: 100,
     earthRadiusKm: 6371,

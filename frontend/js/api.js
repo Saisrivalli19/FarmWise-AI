@@ -3,7 +3,7 @@
 // otherwise falls back to localhost for development.
 const API_BASE_URL =
     (typeof window !== "undefined" && window.FARMWISE_CONFIG?.apiBaseUrl) ||
-    "http://127.0.0.1:8000";
+    "https://farmwise-backend-3yha.onrender.com";
 
 
 // Read the current access token.

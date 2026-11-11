@@ -11,7 +11,7 @@
 /* ---------- CONFIGURATION ---------- */
 
 const API_BASE = (
-    window.API_BASE_URL || "http://127.0.0.1:8000"
+    window.API_BASE_URL || "https://farmwise-backend-3yha.onrender.com"
 ).replace(/\/+$/, "");
 
 const getToken = () => sessionStorage.getItem("access_token");
